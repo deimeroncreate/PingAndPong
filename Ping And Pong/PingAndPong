@@ -1,0 +1,73 @@
+from pygame import *
+from pygame import sprite, transform, image, key
+from pygame.locals import *
+from random import randint
+from pygame import font
+
+
+class GameSprite(sprite.Sprite):
+    def __init__(self, player_image, player_x, player_y, player_speed, width=15, height=65):
+        super().__init__()
+        self.image = transform.scale(image.load(player_image), (width, height))
+        self.speed = player_speed
+        self.rect = self.image.get_rect()
+        self.rect.x = player_x
+        self.rect.y = player_y
+
+
+class Player1(GameSprite):
+    def update(self): 
+        keys = key.get_pressed()
+
+        if keys[K_w] and self.rect.y > self.speed:
+            self.rect.y -= self.speed
+        if keys[K_s] and self.rect.bottom < 500 - self.speed: 
+            self.rect.y += self.speed
+
+class Player2(GameSprite):
+    def update(self): 
+        keys = key.get_pressed()
+
+        if keys[K_UP] and self.rect.y > self.speed:
+            self.rect.y -= self.speed
+        if keys[K_DOWN] and self.rect.bottom < 500 - self.speed: 
+            self.rect.y += self.speed
+
+
+
+class Ball(GameSprite):
+    def update(self): 
+        keys = key.get_pressed() 
+
+
+
+init()
+window = display.set_mode((700, 500))
+display.set_caption("Ping And Pong")
+background_image = transform.scale(image.load('Board.png'), (700, 500))
+
+P1 = Player1('P1.png', 50, 200, 5) 
+P2 = Player2('P2.png', 620, 200, 5) 
+
+
+finish = False
+run = True
+clock = time.Clock() 
+
+
+while run:
+    for e in event.get():
+        if e.type == QUIT:
+            run = False
+
+    P1.update()
+    P2.update()
+
+    window.blit(background_image, (0, 0))
+    window.blit(P1.image, (P1.rect.x, P1.rect.y))
+    window.blit(P2.image, (P2.rect.x, P2.rect.y))
+
+    display.update()
+    clock.tick(60)
+
+quit()
