@@ -36,8 +36,23 @@ class Player2(GameSprite):
 
 
 class Ball(GameSprite):
-    def update(self): 
-        keys = key.get_pressed() 
+    def __init__(self, player_image, player_x, player_y, player_speed, width=20, height=20):
+        super().__init__(player_image, player_x, player_y, player_speed, width, height)
+        self.speed_x = player_speed
+        self.speed_y = player_speed
+
+    def update(self):
+        self.rect.x += self.speed_x
+        self.rect.y += self.speed_y
+        if self.rect.top <= 0 or self.rect.bottom >= 500:
+            self.speed_y *= -1
+        if self.rect.colliderect(P1.rect) or self.rect.colliderect(P2.rect):
+            self.speed_x *= -1
+        if self.rect.left < 0 or self.rect.right > 700:
+            self.rect.x = 350  
+            self.rect.y = 250  
+
+
 
 
 
@@ -46,9 +61,9 @@ window = display.set_mode((700, 500))
 display.set_caption("Ping And Pong")
 background_image = transform.scale(image.load('Board.png'), (700, 500))
 
-P1 = Player1('P1.png', 50, 200, 5) 
-P2 = Player2('P2.png', 620, 200, 5) 
-
+P1 = Player1('P1.png', 50, 200, 6) 
+P2 = Player2('P2.png', 620, 200, 6) 
+ball = Ball('ball.png', 350, 250, 3)
 
 finish = False
 run = True
@@ -62,10 +77,13 @@ while run:
 
     P1.update()
     P2.update()
+    ball.update()
 
     window.blit(background_image, (0, 0))
     window.blit(P1.image, (P1.rect.x, P1.rect.y))
     window.blit(P2.image, (P2.rect.x, P2.rect.y))
+    if 0 <= ball.rect.x <= 700:
+        window.blit(ball.image, (ball.rect.x, ball.rect.y))     
 
     display.update()
     clock.tick(60)
